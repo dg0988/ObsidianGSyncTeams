@@ -1,0 +1,10 @@
+{
+  "id": "gsync-teams",
+  "name": "GSync Teams",
+  "version": "1.0.0",
+  "minAppVersion": "1.12.3",
+  "description": "Add-on for GSync: sync folders in Google Shared Drives and manage who can view or edit each synced folder. Requires GSync and a paid license.",
+  "author": "ID Communications LLC",
+  "authorUrl": "https://github.com/dg0988",
+  "isDesktopOnly": false
+}

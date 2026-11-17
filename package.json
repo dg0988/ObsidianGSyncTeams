@@ -1,0 +1,25 @@
+{
+  "name": "gsync-teams",
+  "version": "1.0.0",
+  "description": "GSync Teams: Shared Drives and folder access management add-on for GSync (Obsidian)",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc --noEmit && node esbuild.config.mjs production",
+    "lint": "eslint src",
+    "test": "node tests/run.mjs"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.12.0",
+    "eslint-plugin-obsidianmd": "^0.4.2",
+    "obsidian": "^1.13.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.1"
+  },
+  "dependencies": {
+    "tweetnacl": "1.0.3"
+  }
+}

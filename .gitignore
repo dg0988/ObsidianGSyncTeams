@@ -1,0 +1,11 @@
+node_modules/
+main.js
+data.json
+*.zip
+
+# License signing key: never commit
+keys/private.key
+
+sales-worker/node_modules/
+sales-worker/dist/
+sales-worker/.wrangler/
