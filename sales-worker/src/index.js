@@ -356,7 +356,7 @@ export default {
 		try {
 			if (request.method === "GET" && (p === "/" || p === "/pro")) return html(landingPage(env));
 			if (request.method === "GET" && p === "/success") return success(env, url.searchParams.get("session_id"));
-			if (request.method === "GET" && p === "/api/health") return json({ ok: true, live: String(env.STRIPE_SECRET_KEY || "").startsWith("sk_live_") });
+			if (request.method === "GET" && p === "/api/health") return json({ ok: true, live: /^(sk|rk)_live_/.test(String(env.STRIPE_SECRET_KEY || "")) });
 			if (request.method === "POST" && p === "/api/checkout") return createCheckout(env, env.PUBLIC_URL || url.origin, request);
 			if (request.method === "GET" && p === "/buy") return buyLink(env, env.PUBLIC_URL || url.origin, url);
 			if (request.method === "POST" && p === "/api/activate") return activate(env, request);
