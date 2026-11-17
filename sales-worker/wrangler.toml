@@ -18,6 +18,7 @@ SUPPORT_EMAIL = "support@example.com"
 EMAIL_FROM = "GSync <licenses@example.com>"   # must be a domain verified in Resend
 DIRECTORY_URL = "https://community.obsidian.md/plugins/gsync-teams"
 STRIPE_AUTOMATIC_TAX = "false"   # set "true" only after turning on Stripe Tax in your dashboard
+SITE_URL = "https://idcomm.tech/gsync-teams"   # your sales page; "Back" from Stripe Checkout returns here
 # PUBLIC_URL = "https://gsync.idcomm.tech"   # optional: force the domain used in Stripe redirect URLs
 
 # Secrets (never put these in this file) — set with `npx wrangler secret put NAME`:

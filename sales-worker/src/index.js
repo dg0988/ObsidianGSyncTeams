@@ -166,10 +166,10 @@ async function verifyStripeSignature(env, header, payload) {
 }
 
 // ---------- routes ----------
-async function createCheckout(env, origin, request) {
-	const { users } = await request.json().catch(() => ({}));
+/** Start a Stripe Checkout for `users` users. Returns { url } or { error, status }. */
+async function startCheckout(env, origin, users) {
 	const n = Number(users);
-	if (priceFor(n) === null) return json({ error: `Choose between ${MIN_USERS} and ${MAX_USERS} users.` }, 400);
+	if (priceFor(n) === null) return { error: `Choose between ${MIN_USERS} and ${MAX_USERS} users.`, status: 400 };
 	const params = {
 		mode: "payment",
 		"line_items[0][quantity]": "1",
@@ -182,14 +182,33 @@ async function createCheckout(env, origin, request) {
 		"payment_intent_data[metadata][product]": PRODUCT_TAG,
 		"payment_intent_data[metadata][users]": String(n),
 		success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-		cancel_url: `${origin}/#buy`,
+		// Back to the page the buyer came from: your own site (SITE_URL) or this worker's page.
+		cancel_url: env.SITE_URL || `${origin}/#buy`,
 		allow_promotion_codes: "true",
 		"custom_text[submit][message]": "Your license key appears on the next page and is emailed to you.",
 	};
 	if (env.STRIPE_AUTOMATIC_TAX === "true") params["automatic_tax[enabled]"] = "true";
 	const r = await stripe(env, "POST", "/v1/checkout/sessions", params);
-	if (!r.ok || !r.data.url) { console.log("checkout create failed", r.status, JSON.stringify(r.data)); return json({ error: "Couldn't start checkout. Please try again." }, 502); }
-	return json({ url: r.data.url });
+	if (!r.ok || !r.data.url) { console.log("checkout create failed", r.status, JSON.stringify(r.data)); return { error: "Couldn't start checkout. Please try again.", status: 502 }; }
+	return { url: r.data.url };
+}
+
+/** POST /api/checkout {users}: used by this worker's own page. */
+async function createCheckout(env, origin, request) {
+	const { users } = await request.json().catch(() => ({}));
+	const r = await startCheckout(env, origin, users);
+	return r.url ? json({ url: r.url }) : json({ error: r.error }, r.status);
+}
+
+/**
+ * GET /buy?users=N: a plain link for buttons on another website (e.g. idcomm.tech).
+ * Starts Stripe Checkout and redirects straight to it.
+ */
+async function buyLink(env, origin, url) {
+	const r = await startCheckout(env, origin, url.searchParams.get("users") || MIN_USERS);
+	if (r.url) return Response.redirect(r.url, 303);
+	const back = env.SITE_URL || `${origin}/#buy`;
+	return new Response(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GSync Teams</title><body style="font-family:system-ui,sans-serif;max-width:520px;margin:60px auto;padding:0 16px"><h1>Checkout didn't start</h1><p>${r.error}</p><p><a href="${back}">Go back</a></p>`, { status: r.status, headers: { "content-type": "text/html; charset=utf-8" } });
 }
 
 async function success(env, sessionId) {
@@ -339,6 +358,7 @@ export default {
 			if (request.method === "GET" && p === "/success") return success(env, url.searchParams.get("session_id"));
 			if (request.method === "GET" && p === "/api/health") return json({ ok: true, live: String(env.STRIPE_SECRET_KEY || "").startsWith("sk_live_") });
 			if (request.method === "POST" && p === "/api/checkout") return createCheckout(env, env.PUBLIC_URL || url.origin, request);
+			if (request.method === "GET" && p === "/buy") return buyLink(env, env.PUBLIC_URL || url.origin, url);
 			if (request.method === "POST" && p === "/api/activate") return activate(env, request);
 			if (request.method === "POST" && p === "/api/devices") return listDevices(env, request);
 			if (request.method === "POST" && p === "/api/deactivate") return deactivate(env, request);

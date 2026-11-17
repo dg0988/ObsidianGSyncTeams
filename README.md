@@ -34,7 +34,7 @@ One payment, no subscription. Each user can use GSync Teams on **2 devices** (fo
 | 20 | 40 | $289 | $14.45 |
 | 30 | 60 | $400 | $13.33 |
 
-Any number from 3 to 30 users. Buy at the [GSync Teams page](https://gsync-teams.dima0988.workers.dev/). For more than 30 users, email the address on that page.
+Any number from 3 to 30 users. Buy at the [GSync Teams page](https://idcomm.tech/gsync-teams). For more than 30 users, use the contact form on that site.
 
 ---
 

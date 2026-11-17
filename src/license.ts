@@ -11,7 +11,8 @@ import nacl from "tweetnacl";
 export const PUBLIC_KEY = "1gnCE3y5G9vtHYG2CkXCv60Iqr9T7UK0fZR9Ds8ckms";
 /** The GSync Teams store and activation server. */
 export const SERVER = "https://gsync-teams.dima0988.workers.dev";
-export const BUY_URL = `${SERVER}/#buy`;
+/** The sales page on ID Communications' site. */
+export const BUY_URL = "https://idcomm.tech/gsync-teams";
 export const DEVICES_PER_USER = 2;
 export const PRICE = "from $49 one-time for 3 users";
 /** Refresh an activation in the background once it's this old. */
