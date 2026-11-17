@@ -117,6 +117,86 @@ async function issueForSession(env, s, source) {
 	return record;
 }
 
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+/** The license email as HTML, in idcomm.tech's colors. Table layout and inline styles so it renders in every mail app. */
+export function keyEmailHtml(env, rec) {
+	const SANS = "'Space Grotesk',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif";
+	const MONO = "'JetBrains Mono',Consolas,Menlo,'Courier New',monospace";
+	const INK = "#0E0D0B", PAPER = "#FBF8F2", CREAM = "#F4EFE6", ACCENT = "#E6532D", MUTED = "#6B645A", LINE = "#E4DDD1";
+	const first = String(rec.name || "").replace(/<.*>/, "").trim().split(/\s+/)[0];
+	const hello = first && !/^test$/i.test(first) && !first.includes("@") ? `Hi ${esc(first)},` : "Hi,";
+	const amount = rec.amount === "comp" ? "Complimentary" : esc(rec.amount);
+	const step = (n, title, body) => `
+<tr><td style="padding:0 0 14px 0;vertical-align:top;width:34px">
+  <div style="width:24px;height:24px;line-height:24px;border-radius:12px;background:${ACCENT};color:#fff;font:700 13px ${SANS};text-align:center">${n}</div>
+</td><td style="padding:2px 0 14px 0;font:15px/1.5 ${SANS};color:${INK}"><b>${title}</b><br><span style="color:${MUTED}">${body}</span></td></tr>`;
+	const fact = (label, value) => `
+<td valign="top" style="vertical-align:top;padding:12px 14px;border:1px solid ${LINE};border-radius:8px;background:#fff">
+  <div style="font:700 10px ${MONO};letter-spacing:.12em;text-transform:uppercase;color:${MUTED}">${label}</div>
+  <div style="font:600 17px ${SANS};color:${INK};padding-top:2px">${value}</div>
+</td>`;
+	return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
+<title>Your ${esc(env.PRODUCT_NAME)} license key</title></head>
+<body style="margin:0;padding:0;background:#EDE7DC">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">Your license key for ${rec.users} users (${rec.devices} devices), and how to activate it.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EDE7DC"><tr><td align="center" style="padding:28px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:${PAPER};border-radius:14px;overflow:hidden">
+
+<tr><td style="background:${INK};padding:26px 28px 24px">
+  <div style="font:700 11px ${MONO};letter-spacing:.18em;text-transform:uppercase;color:${ACCENT}">ID Communications</div>
+  <div style="font:700 28px/1.15 ${SANS};color:${CREAM};padding-top:8px">${esc(env.PRODUCT_NAME)}</div>
+  <div style="font:15px/1.4 ${SANS};color:#B9B1A4;padding-top:4px">Shared Drives and access control for GSync</div>
+  <div style="height:3px;width:44px;background:${ACCENT};margin-top:16px;line-height:3px;font-size:0">&nbsp;</div>
+</td></tr>
+
+<tr><td style="padding:28px 28px 6px;font:16px/1.55 ${SANS};color:${INK}">
+  <p style="margin:0 0 12px">${hello}</p>
+  <p style="margin:0 0 20px">Thanks for buying ${esc(env.PRODUCT_NAME)}. Here's your license key. Keep this email: you'll paste the key on each device.</p>
+
+  <div style="font:700 10px ${MONO};letter-spacing:.14em;text-transform:uppercase;color:${MUTED};padding-bottom:6px">Your license key</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+    <td style="background:${INK};border-left:4px solid ${ACCENT};border-radius:6px;padding:16px 18px;font:500 14px/1.55 ${MONO};color:${CREAM};word-break:break-all">${esc(rec.key)}</td>
+  </tr></table>
+  <div style="font:13px ${SANS};color:${MUTED};padding-top:6px">Copy the whole key, from <span style="font-family:${MONO}">GST-</span> to the last character.</div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="6" style="margin:18px -6px 4px"><tr>
+    ${fact("Users", rec.users)}${fact("Devices", `${rec.devices} <span style="font-size:13px;color:${MUTED};font-weight:400">(2 per user)</span>`)}${fact("Paid", amount)}
+  </tr></table>
+</td></tr>
+
+<tr><td style="padding:14px 28px 4px">
+  <div style="font:700 19px ${SANS};color:${INK};padding-bottom:14px">Activate on each device</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+    ${step(1, "Install both plugins", "In Obsidian, open Settings → Community plugins and install <b>GSync</b> (free) and <b>GSync Teams</b>.")}
+    ${step(2, "Paste the key", "Open Settings → GSync Teams and paste the key under <b>License key</b>.")}
+    ${step(3, "Tap Activate", "It needs internet once. After that GSync Teams works offline.")}
+  </table>
+  <table role="presentation" cellpadding="0" cellspacing="0" style="margin:6px 0 22px"><tr>
+    <td style="background:${ACCENT};border-radius:8px"><a href="${esc(env.SITE_URL || "https://idcomm.tech/gsync-teams")}" style="display:inline-block;padding:13px 22px;font:700 15px ${SANS};color:#fff;text-decoration:none">Setup guide</a></td>
+    <td style="padding-left:16px"><a href="${esc(env.DIRECTORY_URL)}" style="font:600 15px ${SANS};color:${ACCENT};text-decoration:none">Plugin page →</a></td>
+  </tr></table>
+</td></tr>
+
+<tr><td style="padding:0 28px 24px">
+  <div style="background:#fff;border:1px solid ${LINE};border-radius:10px;padding:14px 16px;font:14px/1.5 ${SANS};color:${MUTED}">
+    <b style="color:${INK}">New phone or laptop?</b> Free the old device's slot under Settings → GSync Teams → <b>Show devices</b> → Remove. Share the key only with people in your business.
+  </div>
+</td></tr>
+
+<tr><td style="border-top:1px solid ${LINE};padding:18px 28px 24px;font:13px/1.6 ${SANS};color:${MUTED}">
+  Questions? Just reply to this email, or write <a href="mailto:${esc(env.SUPPORT_EMAIL)}" style="color:${ACCENT};text-decoration:none">${esc(env.SUPPORT_EMAIL)}</a>.<br>
+  <span style="font-family:${MONO};font-size:11px">Order ${esc(rec.orderId)}</span><br>
+  ${esc(env.SELLER_NAME)} · <a href="https://idcomm.tech" style="color:${MUTED}">idcomm.tech</a>
+</td></tr>
+
+</table>
+</td></tr></table>
+</body></html>`;
+}
+
 async function sendKeyEmail(env, rec) {
 	if (!env.RESEND_API_KEY || !rec.email) return false;
 	const text = `Thanks for buying ${env.PRODUCT_NAME}!
@@ -143,10 +223,11 @@ Questions? Reply to this email or write ${env.SUPPORT_EMAIL}.
 		const res = await fetch("https://api.resend.com/emails", {
 			method: "POST",
 			headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
-			body: JSON.stringify({ from: env.EMAIL_FROM, to: [rec.email], reply_to: env.SUPPORT_EMAIL, subject: `Your ${env.PRODUCT_NAME} license key`, text }),
+			body: JSON.stringify({ from: env.EMAIL_FROM, to: [rec.email], reply_to: env.SUPPORT_EMAIL, subject: `Your ${env.PRODUCT_NAME} license key`, text, html: keyEmailHtml(env, rec) }),
 		});
+		if (!res.ok) console.log("resend failed", res.status, await res.text().catch(() => ""));
 		return res.ok;
-	} catch { return false; }
+	} catch (e) { console.log("resend error", e && e.message); return false; }
 }
 
 /** Verify Stripe-Signature header (HMAC-SHA256 of "t.payload", 5-minute tolerance). */
