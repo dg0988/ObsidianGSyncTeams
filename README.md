@@ -11,12 +11,13 @@ GSync does all the syncing. GSync Teams never syncs files itself; it plugs into 
 
 ## Requirements and disclosures
 
-- **Requires the GSync plugin**, installed, enabled and signed in to Google.
+- **Requires GSync 1.1.0 or later**, installed, enabled and signed in to Google.
 - **Payment is required for full access.** GSync Teams needs a paid license key. Without one, it does nothing.
 - **Network use.** GSync Teams connects to:
   - **The GSync Teams activation server** (`gsync-teams.dima0988.workers.dev`): to activate a device, list or remove a license's devices, and renew an activation about once a month. It sends the license key, a random device id created by this plugin, and a device type such as "Android" or "Windows PC". Nothing about your vault, notes or Google account is sent.
   - **Google Drive** (`www.googleapis.com`), through GSync's sign-in: to look up Shared Drives and to read or change who has access to a folder, only when you use those features.
 - **Google account required**, through GSync. Shared Drives need a Google Workspace plan.
+- **Works offline** after activation. A device can go up to 120 days without connecting.
 - **No telemetry, analytics or ads.**
 
 ---
@@ -34,7 +35,7 @@ One payment, no subscription. Each user can use GSync Teams on **2 devices** (fo
 | 20 | 40 | $289 | $14.45 |
 | 30 | 60 | $400 | $13.33 |
 
-Any number from 3 to 30 users. Buy at the [GSync Teams page](https://idcomm.tech/gsync-teams). For more than 30 users, use the contact form on that site.
+Any number from 3 to 30 users. **Buy at [idcomm.tech/gsync-teams](https://idcomm.tech/gsync-teams).** Your key appears right after payment and is emailed to you. For more than 30 users, use the contact form on that site.
 
 ---
 
