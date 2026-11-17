@@ -7,15 +7,15 @@ compatibility_date = "2026-11-01"
 # then paste the id below.
 [[kv_namespaces]]
 binding = "LICENSES"
-id = "PASTE_KV_NAMESPACE_ID_HERE"
+id = "a8eecd86c851439099cff36428f8674d"
 
 [vars]
 # Prices by number of users are in src/pricing.js (3 users $49 ... 30 users $400).
 CURRENCY = "USD"
 PRODUCT_NAME = "GSync Teams"
 SELLER_NAME = "ID Communications LLC"
-SUPPORT_EMAIL = "support@example.com"
-EMAIL_FROM = "GSync <licenses@example.com>"   # must be a domain verified in Resend
+SUPPORT_EMAIL = "support@idcomm.tech"
+EMAIL_FROM = "GSync by ID Communications <licenses@idcomm.tech>"   # must be a domain verified in Resend
 DIRECTORY_URL = "https://community.obsidian.md/plugins/gsync-teams"
 STRIPE_AUTOMATIC_TAX = "false"   # set "true" only after turning on Stripe Tax in your dashboard
 SITE_URL = "https://idcomm.tech/gsync-teams"   # your sales page; "Back" from Stripe Checkout returns here
